@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        *{
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 10px;
+        }
+
+        #results{
+            display: flex;
+            flex-flow: row wrap;
+            margin-top: 15px;
+        }
+        .song{
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid silver;
+            width: 250px;
+            margin: 5px;
+        }
+        .song .title{
+            font-weight: bold;
+            font-size: 125%;
+        }
+        .song audio{
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+    <h1>Deezer Searcher</h1>
+    <div><input type="text" placeholder="Busca algo"> <button onclick="doSearch()">Search</button></div>
+    <div id="results">
+        <!--div class="song">
+            <div class="title">Enter Sandman</div>
+            <img src="https://picsum.photos/200" alt="">
+            <audio src="" controls></audio>
+        </div-->
+    </div>
+    <script>
+        let data = undefined;
+
+        function doSearch(){
+            const input = document.querySelector("input");
+            const query = input.value;
+            fetch('https://4a709985b773.ngrok.io/Deezer/search/'+query)
+            .then(res => res.json())
+            .then((response)=> {
+                data = response.data;
+                console.log(data);
+                renderResults();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            
+        }
+        function renderResults() {
+            const results = document.querySelector("#results");
+            results.innerHTML = "";
+            data.forEach(song => {
+                const songEl = document.createElement("div");
+                songEl.classList.add("song");
+                const titleEl = document.createElement("div");
+                titleEl.classList.add("title");
+                titleEl.innerHTML = song.title;
+                const player = document.createElement("audio");
+                player.src = song.preview;
+                player.controls = true;
+                const img = document.createElement("img");
+                img.src = song.album.cover;
+                songEl.appendChild(titleEl);
+                songEl.appendChild(img);
+                songEl.appendChild(player);
+                results.appendChild(songEl);
+            });
+        }
+    </script>
+</body>
+</html>
